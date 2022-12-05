@@ -23,8 +23,8 @@ class BLEProjectViewModel: NSObject {
     self.delegate = delegate
   }
   
-  func addDeviceToArray(device: String, data: String) {
-    scannedDevicesArray.append(BluetoothDeviceModel(name: device, data: data))
+  func addDeviceToArray(device: String, data: String, rssi: String) {
+    scannedDevicesArray.append(BluetoothDeviceModel(name: device, data: data, rssi: rssi))
     self.delegate?.update()
   }
   

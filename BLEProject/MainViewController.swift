@@ -108,12 +108,13 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     guard let batteryLevel = bluetoothService.viewModel?.batteryLevel else { return }
-    //    bluetoothService.selectedDevice()
+//        bluetoothService.selectedDevice()
 
     let deviceDetailVC = DeviceDetailViewController()
 
     deviceDetailVC.deviceHeaderName = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].name ?? ""
     deviceDetailVC.deviceDetail = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].data ?? ""
+    deviceDetailVC.deviceRssiDetail = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].rssi ?? ""
     deviceDetailVC.batteryInfo = String(describing: batteryLevel)
     print("3 didSelectItem", batteryLevel)
 

@@ -36,30 +36,32 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
   func centralManagerDidUpdateState(_ central: CBCentralManager) {
     if central.state == CBManagerState.poweredOn {
       print("Bluetooth is ON", central.state)
-      central.scanForPeripherals(withServices: nil)
+      central.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
     } else {
       print("Bluetooth is OFF", central.state)
       viewModel?.turnOnBluetoothAlert()
     }
   }
 
+  /// ran each time a new device is discovered
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+    myPeripheral = peripheral
+    myPeripheral.delegate = self
+
     if let pName = peripheral.name {
       DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
         central.stopScan()
       }
       //      print("Device", pName)
-      myPeripheral = peripheral
-
       let data = advertisementData.description
 
-      myPeripheral.delegate = self
-      centralManager.connect(myPeripheral)
+      centralManager.connect(myPeripheral, options: nil)
 
-      viewModel?.addDeviceToArray(device: pName, data: data)
+      viewModel?.addDeviceToArray(device: pName, data: data, rssi: RSSI.stringValue)
     }
   }
 
+  /// provides incoming information about newly connected device
   func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
     myPeripheral.discoverServices([batteryLevelService])
     print("CONNECTED", myPeripheral.description)
@@ -68,16 +70,22 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
   func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
     guard let services = peripheral.services else { return }
 
-    for service in services {
-      print("SERVICE", service)
-      myPeripheral.discoverCharacteristics([batteryLevelCharacteristic], for: service)
+    if error != nil {
+      print("Error receiving services")
+    } else {
+      for service in services {
+        print("SERVICE", service)
+        myPeripheral.discoverCharacteristics([batteryLevelCharacteristic], for: service)
+      }
     }
+
   }
 
   func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
     guard let characteristics = service.characteristics else { return }
 
     for characteristic in characteristics {
+      peripheral.setNotifyValue(true, for: characteristic)
       peripheral.readValue(for: characteristic)
     }
   }
@@ -94,11 +102,19 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
 
   func selectedDevice() {
     //        myPeripheral.delegate = self
-    //        centralManager.connect(myPeripheral)
+//            centralManager.connect(myPeripheral)
   }
 
   func startScan() {
     centralManager = CBCentralManager(delegate: self, queue: nil)
+  }
+
+  /// cancelling local connection here doesn't always mean the physical link is disconnected immeadiately
+  func disconnectFromDevice() {
+    if myPeripheral != nil {
+      centralManager.cancelPeripheralConnection(myPeripheral)
+      print("DISCONNECTED", myPeripheral)
+    }
   }
 
 }

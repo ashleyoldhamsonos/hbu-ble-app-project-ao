@@ -10,9 +10,11 @@ import Foundation
 struct BluetoothDeviceModel {
   let name: String
   let data: String?
+  let rssi: String
   
-  init(name: String, data: String?) {
+  init(name: String, data: String?, rssi: String) {
     self.name = name
     self.data = data
+    self.rssi = rssi
   }
 }

@@ -11,6 +11,7 @@ class DeviceDetailViewController: UIViewController {
   
   var deviceHeaderName: String = ""
   var deviceDetail: String = ""
+  var deviceRssiDetail: String = ""
   var batteryInfo: String = ""
   var bluetoothManager: BluetoothService?
   
@@ -47,7 +48,14 @@ class DeviceDetailViewController: UIViewController {
     label.numberOfLines = 0
     return label
   }()
-  
+
+  private let rssiLabel: UILabel = {
+    let label = UILabel()
+    label.textColor = .white
+    label.numberOfLines = 0
+    return label
+  }()
+
   let batteryInfoLabel: UILabel = {
     let label = UILabel()
     label.textColor = .white
@@ -72,12 +80,12 @@ class DeviceDetailViewController: UIViewController {
   }()
   
   @objc func disconnectFromDevice() {
-    //    bluetoothManager?.disconnectFromDevice()
+    bluetoothManager?.disconnectFromDevice()
     navigationController?.popViewController(animated: true)
   }
   
   func setupDetailLayout() {
-    [detailLabel, batteryInfoLabel, disconnectDeviceButton].forEach {
+    [detailLabel, rssiLabel, batteryInfoLabel, disconnectDeviceButton].forEach {
       view.addSubview($0)
       $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -87,8 +95,11 @@ class DeviceDetailViewController: UIViewController {
       detailLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
       detailLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
       detailLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+      rssiLabel.topAnchor.constraint(equalTo: detailLabel.bottomAnchor, constant: 16),
+      rssiLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
       
-      batteryInfoLabel.topAnchor.constraint(equalTo: detailLabel.bottomAnchor, constant: 16),
+      batteryInfoLabel.topAnchor.constraint(equalTo: rssiLabel.bottomAnchor, constant: 16),
       batteryInfoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
       
       disconnectDeviceButton.topAnchor.constraint(equalTo: batteryInfoLabel.bottomAnchor, constant: 16),
@@ -99,6 +110,7 @@ class DeviceDetailViewController: UIViewController {
     
     detailLabel.text = "Advertising Data: \(String(describing: deviceDetail))"
     batteryInfoLabel.text = "Battery percentage: \(String(describing: batteryInfo))%"
+    rssiLabel.text = "RSSI Strength: \(deviceRssiDetail)db"
     
   }
 }
