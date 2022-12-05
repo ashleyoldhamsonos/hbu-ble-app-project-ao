@@ -8,26 +8,25 @@
 import CoreBluetooth
 import UIKit
 
-protocol BluetoothView: AnyObject {
-  func update()
-  func alert()
-}
+//protocol BluetoothView: AnyObject {
+////  func update()
+////  func alert()
+//}
 
 class BluetoothService: NSObject {
 
-  var view: BluetoothView?
-  var scannedDevicesArray: [BluetoothDeviceModel] = []
+  //  var view: BluetoothView?
   var viewModel: BLEProjectViewModel?
   private var centralManager: CBCentralManager!
   private var myPeripheral: CBPeripheral!
   let batteryLevelService = CBUUID(string: "0x180F")
   let batteryLevelCharacteristic = CBUUID(string: "0x2A19")
   let heartRateService = CBUUID(string: "0x180D")
-  var batteryLevel: String?
+  static let shared = BluetoothService()
 
-  init(view: BluetoothView) {
+  override init() {
     super .init()
-    self.view = view
+    viewModel = BLEProjectViewModel()
   }
 
 }
@@ -40,7 +39,7 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
       central.scanForPeripherals(withServices: nil)
     } else {
       print("Bluetooth is OFF", central.state)
-      self.view?.alert()
+      viewModel?.turnOnBluetoothAlert()
     }
   }
 
@@ -54,7 +53,10 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
 
       let data = advertisementData.description
 
-      addDeviceToArray(device: pName, data: data)
+      myPeripheral.delegate = self
+      centralManager.connect(myPeripheral)
+
+      viewModel?.addDeviceToArray(device: pName, data: data)
     }
   }
 
@@ -78,33 +80,25 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
     for characteristic in characteristics {
       peripheral.readValue(for: characteristic)
     }
-
   }
 
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-    guard let batteryData = characteristic.value else { return }
+    guard let batteryData = characteristic.value, let vm = viewModel else { return }
 
     if characteristic.uuid == batteryLevelCharacteristic {
-      print("1 BATTERY", batteryData.first ?? "nil")
-      batteryLevel = String(describing: batteryData.first)
-      print("2 BATTERYLEVEL", batteryLevel ?? "nil")
+      vm.batteryLevel = batteryData.first ?? 0
     } else {
       print("error reading characteristic value")
     }
   }
 
   func selectedDevice() {
-    myPeripheral.delegate = self
-    centralManager.connect(myPeripheral)
+    //        myPeripheral.delegate = self
+    //        centralManager.connect(myPeripheral)
   }
 
   func startScan() {
     centralManager = CBCentralManager(delegate: self, queue: nil)
-  }
-
-  func addDeviceToArray(device: String, data: String) {
-    scannedDevicesArray.append(BluetoothDeviceModel(name: device, data: data))
-    self.view?.update()
   }
 
 }

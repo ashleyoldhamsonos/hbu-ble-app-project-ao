@@ -7,18 +7,21 @@
 
 import UIKit
 
-class MainViewController: UIViewController, BluetoothView, BLEProjectView {
+class MainViewController: UIViewController, ViewModelUpdateDelegate {
 
   var bluetoothService: BluetoothService!
-  var viewModel: BLEProjectViewModel!
+  //  var testingVM: BLEProjectViewModel?
 
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .darkGray
     navigationItem.title = "Devices"
     
-    bluetoothService = BluetoothService(view: self)
-//    viewModel = BLEProjectViewModel(view: self)
+    bluetoothService = BluetoothService()
+    bluetoothService.viewModel?.delegate = self
+    //    testingVM = BLEProjectViewModel()
+    //    testingVM?.delegate = self
+    
     setupViews()
   }
 
@@ -53,6 +56,7 @@ class MainViewController: UIViewController, BluetoothView, BLEProjectView {
 
   @objc private func onScanButtonTap() {
     bluetoothService.startScan()
+    //    testingVM?.startScanning()
   }
 
   func update() {
@@ -93,29 +97,28 @@ class MainViewController: UIViewController, BluetoothView, BLEProjectView {
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return bluetoothService.scannedDevicesArray.count
+    return bluetoothService.viewModel?.scannedDevicesArray.count ?? 0
   }
 
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.identifier, for: indexPath) as? CollectionViewCell else { return UICollectionViewCell() }
-    cell.deviceLabel.text = bluetoothService.scannedDevicesArray[indexPath.row].name
+    cell.deviceLabel.text = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].name
     return cell
   }
 
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    guard let batteryLevel = bluetoothService.viewModel?.batteryLevel else { return }
+    //    bluetoothService.selectedDevice()
 
     let deviceDetailVC = DeviceDetailViewController()
-    deviceDetailVC.deviceDetail = bluetoothService.scannedDevicesArray[indexPath.row].data ?? ""
 
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-      deviceDetailVC.batteryInfo = self.bluetoothService.batteryLevel ?? "Error reading data"
-      print("3 didSelectItem", self.bluetoothService.batteryLevel ?? "Error!")
-    }
+    deviceDetailVC.deviceHeaderName = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].name ?? ""
+    deviceDetailVC.deviceDetail = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].data ?? ""
+    deviceDetailVC.batteryInfo = String(describing: batteryLevel)
+    print("3 didSelectItem", batteryLevel)
 
     navigationController?.pushViewController(deviceDetailVC, animated: true)
-    bluetoothService.selectedDevice()
   }
-
 
 }
 

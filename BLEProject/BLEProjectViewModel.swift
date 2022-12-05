@@ -7,21 +7,36 @@
 
 import UIKit
 
-protocol BLEProjectView: AnyObject {
+protocol ViewModelUpdateDelegate: AnyObject {
   func update()
+  func alert()
 }
 
-struct BLEProjectViewModel {
-
-  weak var view: BLEProjectView?
-  var scannedDevices: [BluetoothDeviceModel] = []
-
-  init(view: BLEProjectView?) {
-    self.view = view
+class BLEProjectViewModel: NSObject {
+  
+  weak var delegate: ViewModelUpdateDelegate?
+  var scannedDevicesArray: [BluetoothDeviceModel] = []
+  var batteryLevel: UInt8 = 0
+  
+  init(delegate: ViewModelUpdateDelegate? = nil) {
+    super .init()
+    self.delegate = delegate
   }
-
-  mutating func addDeviceToArray(device: String, data: String) {
-    scannedDevices.append(BluetoothDeviceModel(name: device, data: data))
-    self.view?.update()
+  
+  func addDeviceToArray(device: String, data: String) {
+    scannedDevicesArray.append(BluetoothDeviceModel(name: device, data: data))
+    self.delegate?.update()
+  }
+  
+  func turnOnBluetoothAlert() {
+    self.delegate?.alert()
+  }
+  
+  func startScanning() {
+    BluetoothService.shared.startScan()
+  }
+  
+  func selectedDevice() {
+    BluetoothService.shared.selectedDevice()
   }
 }
