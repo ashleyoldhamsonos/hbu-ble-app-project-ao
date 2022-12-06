@@ -11,11 +11,16 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
 
   var bluetoothService: BluetoothService!
   //  var testingVM: BLEProjectViewModel?
+  var refreshControl: UIRefreshControl!
 
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .darkGray
     navigationItem.title = "Devices"
+
+    refreshControl = UIRefreshControl()
+    refreshControl.addTarget(self, action: #selector(refreshScan), for: .valueChanged)
+    collectionView.refreshControl = refreshControl
     
     bluetoothService = BluetoothService()
     bluetoothService.viewModel?.delegate = self
@@ -24,6 +29,13 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
     
     setupViews()
   }
+
+  private lazy var refreshToScan: UIRefreshControl = {
+    let refresh = UIRefreshControl()
+    refresh.attributedTitle = NSAttributedString(string: "Pull to refresh!")
+    refresh.addTarget(self, action: #selector(refreshScan), for: .valueChanged)
+    return refresh
+  }()
 
   private lazy var collectionView: UICollectionView = {
     let layoutConfig = UICollectionLayoutListConfiguration(appearance: .plain)
@@ -55,8 +67,15 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
   }()
 
   @objc private func onScanButtonTap() {
+    bluetoothService.viewModel?.scannedDevicesArray = []
     bluetoothService.startScan()
     //    testingVM?.startScanning()
+  }
+
+  @objc private func refreshScan() {
+    bluetoothService.viewModel?.scannedDevicesArray = []
+    bluetoothService.startScan()
+    refreshControl.endRefreshing()
   }
 
   func update() {

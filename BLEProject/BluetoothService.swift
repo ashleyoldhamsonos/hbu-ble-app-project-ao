@@ -49,13 +49,12 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
     myPeripheral.delegate = self
 
     if let pName = peripheral.name {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
         central.stopScan()
+        centralManager.connect(myPeripheral, options: nil)
       }
       //      print("Device", pName)
       let data = advertisementData.description
-
-      centralManager.connect(myPeripheral, options: nil)
 
       viewModel?.addDeviceToArray(device: pName, data: data, rssi: RSSI.stringValue)
     }
