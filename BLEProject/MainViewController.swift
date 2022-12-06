@@ -10,7 +10,6 @@ import UIKit
 class MainViewController: UIViewController, ViewModelUpdateDelegate {
 
   var bluetoothService: BluetoothService!
-  //  var testingVM: BLEProjectViewModel?
   var refreshControl: UIRefreshControl!
 
   override func viewDidLoad() {
@@ -24,8 +23,6 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
     
     bluetoothService = BluetoothService()
     bluetoothService.viewModel?.delegate = self
-    //    testingVM = BLEProjectViewModel()
-    //    testingVM?.delegate = self
     
     setupViews()
   }
@@ -69,7 +66,6 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
   @objc private func onScanButtonTap() {
     bluetoothService.viewModel?.scannedDevicesArray = []
     bluetoothService.startScan()
-    //    testingVM?.startScanning()
   }
 
   @objc private func refreshScan() {
