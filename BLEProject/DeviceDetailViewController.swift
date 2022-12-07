@@ -17,7 +17,11 @@ class DeviceDetailViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = .darkGray
+    view.backgroundColor = .white
+    
+    let navigationTextColour = UINavigationBarAppearance()
+    navigationTextColour.titleTextAttributes = [.foregroundColor: UIColor.black]
+    navigationItem.standardAppearance = navigationTextColour
     navigationItem.title = deviceHeaderName
     
     /// potential removal of back button for disconnection of devices
@@ -36,7 +40,7 @@ class DeviceDetailViewController: UIViewController {
   
   private let navigationHeaderLabel: UILabel = {
     let label = UILabel()
-    label.textColor = .white
+    label.textColor = .black
     label.font = UIFont.boldSystemFont(ofSize: 17)
     label.numberOfLines = 0
     return label
@@ -44,21 +48,21 @@ class DeviceDetailViewController: UIViewController {
   
   private let detailLabel: UILabel = {
     let label = UILabel()
-    label.textColor = .white
+    label.textColor = .black
     label.numberOfLines = 0
     return label
   }()
 
   private let rssiLabel: UILabel = {
     let label = UILabel()
-    label.textColor = .white
+    label.textColor = .black
     label.numberOfLines = 0
     return label
   }()
 
   let batteryInfoLabel: UILabel = {
     let label = UILabel()
-    label.textColor = .white
+    label.textColor = .black
     label.numberOfLines = 0
     return label
   }()

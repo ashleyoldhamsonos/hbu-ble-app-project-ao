@@ -16,6 +16,7 @@ class BLEProjectViewModel: NSObject {
   
   weak var delegate: ViewModelUpdateDelegate?
   var scannedDevicesArray: [BluetoothDeviceModel] = []
+  var amendedArray: [BluetoothDeviceModel] = []
   var batteryLevel: UInt8 = 0
   
   init(delegate: ViewModelUpdateDelegate? = nil) {

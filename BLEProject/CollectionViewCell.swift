@@ -12,7 +12,7 @@ final class CollectionViewCell: UICollectionViewCell {
   let deviceLabel: UILabel = {
     let label = UILabel()
     label.textAlignment = .left
-    label.textColor = .white
+    label.textColor = .black
     label.font = UIFont.boldSystemFont(ofSize: 17)
     return label
   }()
@@ -29,7 +29,7 @@ final class CollectionViewCell: UICollectionViewCell {
   }
   
   private func setupLayout() {
-    backgroundColor = .darkGray
+    backgroundColor = .white
     
     [deviceLabel].forEach {
       contentView.addSubview($0)

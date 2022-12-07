@@ -14,7 +14,11 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = .darkGray
+    view.backgroundColor = .white
+
+    let navigationTextColour = UINavigationBarAppearance()
+    navigationTextColour.titleTextAttributes = [.foregroundColor: UIColor.black]
+    navigationItem.standardAppearance = navigationTextColour
     navigationItem.title = "Devices"
 
     refreshControl = UIRefreshControl()
@@ -34,7 +38,7 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
     view.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.identifier)
     view.isScrollEnabled = true
     view.showsHorizontalScrollIndicator = false
-    view.backgroundColor = .darkGray
+    view.backgroundColor = .white
     view.delegate = self
     view.dataSource = self
     return view

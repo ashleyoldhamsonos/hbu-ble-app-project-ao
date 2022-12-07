@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BluetoothDeviceModel {
+struct BluetoothDeviceModel: Hashable {
   let name: String
   let data: String?
   let rssi: String
