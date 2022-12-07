@@ -27,13 +27,6 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
     setupViews()
   }
 
-  private lazy var refreshToScan: UIRefreshControl = {
-    let refresh = UIRefreshControl()
-    refresh.attributedTitle = NSAttributedString(string: "Pull to refresh!")
-    refresh.addTarget(self, action: #selector(refreshScan), for: .valueChanged)
-    return refresh
-  }()
-
   private lazy var collectionView: UICollectionView = {
     let layoutConfig = UICollectionLayoutListConfiguration(appearance: .plain)
     let list = UICollectionViewCompositionalLayout.list(using: layoutConfig)
