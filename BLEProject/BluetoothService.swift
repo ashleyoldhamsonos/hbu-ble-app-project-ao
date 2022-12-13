@@ -22,6 +22,7 @@ class BluetoothService: NSObject {
   let batteryLevelService = CBUUID(string: "0x180F")
   let batteryLevelCharacteristic = CBUUID(string: "0x2A19")
   let heartRateService = CBUUID(string: "0x180D")
+  let duke = "FDFFAAEAB6B833D7E9"
   static let shared = BluetoothService()
 
   override init() {
@@ -45,19 +46,32 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
 
   /// ran each time a new device is discovered
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-    myPeripheral = peripheral
-    myPeripheral.delegate = self
+//    myPeripheral = peripheral
+//    myPeripheral.delegate = self
 
     if let pName = peripheral.name {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
+      if pName == duke {
         central.stopScan()
-        centralManager.connect(myPeripheral, options: nil)
+
+        myPeripheral = peripheral
+        myPeripheral.delegate = self
+        central.connect(peripheral)
       }
-      //      print("Device", pName)
       let data = advertisementData.description
 
       viewModel?.addDeviceToArray(device: pName, data: data, rssi: RSSI.stringValue)
     }
+
+//    if let pName = peripheral.name {
+//      DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
+//        central.stopScan()
+//        centralManager.connect(myPeripheral, options: nil)
+//      }
+//      //      print("Device", pName)
+//      let data = advertisementData.description
+//
+//      viewModel?.addDeviceToArray(device: pName, data: data, rssi: RSSI.stringValue)
+//    }
   }
 
   /// provides incoming information about newly connected device
@@ -110,10 +124,10 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
 
   /// cancelling local connection here doesn't always mean the physical link is disconnected immeadiately
   func disconnectFromDevice() {
-    if myPeripheral != nil {
-      centralManager.cancelPeripheralConnection(myPeripheral)
-      print("DISCONNECTED", myPeripheral)
-    }
+//    if myPeripheral != nil {
+//      centralManager.cancelPeripheralConnection(myPeripheral)
+//      print("DISCONNECTED", myPeripheral)
+//    }
   }
 
 }

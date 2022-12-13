@@ -30,10 +30,10 @@
             filePath = "BLEProject/BluetoothService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
-            landmarkName = "BluetoothService"
-            landmarkType = "21">
+            startingLineNumber = "127"
+            endingLineNumber = "127"
+            landmarkName = "disconnectFromDevice()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
