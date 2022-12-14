@@ -43,6 +43,7 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
       central.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
     } else {
       print("Bluetooth is OFF", central.state)
+      viewModel?.checkBluetoothStatus()
       viewModel?.turnOnBluetoothAlert()
       isBluetoothOn = false
     }

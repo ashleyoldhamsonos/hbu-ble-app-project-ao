@@ -23,20 +23,9 @@ class DeviceDetailViewController: UIViewController {
     navigationTextColour.titleTextAttributes = [.foregroundColor: UIColor.black]
     navigationItem.standardAppearance = navigationTextColour
     navigationItem.title = deviceHeaderName
-    
-    /// potential removal of back button for disconnection of devices
-    //    navigationItem.hidesBackButton = true
-    //    let customBackButton = UIBarButtonItem(title: "Back", style: UIBarButtonItem.Style.plain, target: self, action: #selector(disconnectFromDevice))
-    //    navigationItem.leftBarButtonItem = customBackButton
-    //    bluetoothManager = BluetoothService(view: self)
+
     setupDetailLayout()
   }
-  
-  //  private let customBackButton: UIBarButtonItem = {
-  //    let button = UIBarButtonItem(title: "Back", style: UIBarButtonItem.Style.plain, target: DeviceDetailViewController.self, action: #selector(disconnectFromDevice))
-  //
-  //    return button
-  //  }()
   
   private let navigationHeaderLabel: UILabel = {
     let label = UILabel()
