@@ -10,6 +10,7 @@ import UIKit
 protocol ViewModelUpdateDelegate: AnyObject {
   func update()
   func alert()
+  func checkForBluetoothSignal()
 }
 
 class BLEProjectViewModel: NSObject {
@@ -39,5 +40,9 @@ class BLEProjectViewModel: NSObject {
   
   func selectedDevice() {
     BluetoothService.shared.selectedDevice()
+  }
+
+  func checkBluetoothStatus() {
+    self.delegate?.checkForBluetoothSignal()
   }
 }

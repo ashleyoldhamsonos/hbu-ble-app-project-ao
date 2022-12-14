@@ -24,6 +24,7 @@ class BluetoothService: NSObject {
   let heartRateService = CBUUID(string: "0x180D")
   let duke = "FDFFAAEAB6B833D7E9"
   static let shared = BluetoothService()
+  var isBluetoothOn = false
 
   override init() {
     super .init()
@@ -37,10 +38,13 @@ extension BluetoothService: CBCentralManagerDelegate, CBPeripheralDelegate {
   func centralManagerDidUpdateState(_ central: CBCentralManager) {
     if central.state == CBManagerState.poweredOn {
       print("Bluetooth is ON", central.state)
+      isBluetoothOn = true
+      viewModel?.checkBluetoothStatus()
       central.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
     } else {
       print("Bluetooth is OFF", central.state)
       viewModel?.turnOnBluetoothAlert()
+      isBluetoothOn = false
     }
   }
 

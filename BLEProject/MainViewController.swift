@@ -44,6 +44,23 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
     return view
   }()
 
+  private let statusLabel: UILabel = {
+    let label = UILabel()
+    label.text = "STATUS"
+    label.textAlignment = .center
+    label.textColor = .black
+    label.font = UIFont.boldSystemFont(ofSize: 15)
+    return label
+  }()
+
+  private let bluetoothStatusLabel: UILabel = {
+    let label = UILabel()
+    label.text = "CHECKING..."
+    label.textColor = .black
+    label.textAlignment = .center
+    return label
+  }()
+
   private lazy var scanButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setTitle("Scan", for: .normal)
@@ -71,6 +88,16 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
     refreshControl.endRefreshing()
   }
 
+  func checkForBluetoothSignal() {
+    if bluetoothService.isBluetoothOn {
+      bluetoothStatusLabel.text = "Bluetooth is ON"
+      bluetoothStatusLabel.textColor = .green
+    } else {
+      bluetoothStatusLabel.text = "Bluetooth is OFF"
+      bluetoothStatusLabel.textColor = .red
+    }
+  }
+
   func update() {
     collectionView.reloadData()
   }
@@ -85,7 +112,7 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
   }
 
   private func setupViews() {
-    [collectionView, scanButton].forEach {
+    [collectionView, statusLabel, bluetoothStatusLabel, scanButton].forEach {
       view.addSubview($0)
       $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -94,7 +121,13 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
       collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
       collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
       collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-      collectionView.bottomAnchor.constraint(equalTo: scanButton.topAnchor, constant: -16),
+      collectionView.bottomAnchor.constraint(equalTo: statusLabel.topAnchor, constant: -16),
+
+      statusLabel.bottomAnchor.constraint(equalTo: bluetoothStatusLabel.topAnchor, constant: -8),
+      statusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+      bluetoothStatusLabel.bottomAnchor.constraint(equalTo: scanButton.topAnchor, constant: -16),
+      bluetoothStatusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
       scanButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
       scanButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -120,10 +153,10 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     guard let batteryLevel = bluetoothService.viewModel?.batteryLevel else { return }
-//        bluetoothService.selectedDevice()
+    //        bluetoothService.selectedDevice()
 
     let deviceDetailVC = DeviceDetailViewController()
-
+    
     deviceDetailVC.deviceHeaderName = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].name ?? ""
     deviceDetailVC.deviceDetail = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].data ?? ""
     deviceDetailVC.deviceRssiDetail = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].rssi ?? ""
