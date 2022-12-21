@@ -26,7 +26,7 @@ class BluetoothService: NSObject {
   static let shared = BluetoothService()
   var isBluetoothOn = false
 
-  override init() {
+  private override init() {
     super .init()
     viewModel = BLEProjectViewModel()
   }

@@ -9,7 +9,7 @@ import UIKit
 
 class MainViewController: UIViewController, ViewModelUpdateDelegate {
 
-  var bluetoothService: BluetoothService!
+//  var bluetoothService: BluetoothService!
   var refreshControl: UIRefreshControl!
 
   override func viewDidLoad() {
@@ -25,8 +25,8 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
     refreshControl.addTarget(self, action: #selector(refreshScan), for: .valueChanged)
     collectionView.refreshControl = refreshControl
     
-    bluetoothService = BluetoothService()
-    bluetoothService.viewModel?.delegate = self
+//    bluetoothService = BluetoothService()
+    BluetoothService.shared.viewModel?.delegate = self
     
     setupViews()
   }
@@ -78,18 +78,18 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
   }()
 
   @objc private func onScanButtonTap() {
-    bluetoothService.viewModel?.scannedDevicesArray = []
-    bluetoothService.startScan()
+    BluetoothService.shared.viewModel?.scannedDevicesArray = []
+    BluetoothService.shared.startScan()
   }
 
   @objc private func refreshScan() {
-    bluetoothService.viewModel?.scannedDevicesArray = []
-    bluetoothService.startScan()
+    BluetoothService.shared.viewModel?.scannedDevicesArray = []
+    BluetoothService.shared.startScan()
     refreshControl.endRefreshing()
   }
 
   func checkForBluetoothSignal() {
-    if bluetoothService.isBluetoothOn {
+    if BluetoothService.shared.isBluetoothOn {
       bluetoothStatusLabel.text = "Bluetooth is ON"
       bluetoothStatusLabel.textColor = .green
     } else {
@@ -142,24 +142,24 @@ class MainViewController: UIViewController, ViewModelUpdateDelegate {
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return bluetoothService.viewModel?.scannedDevicesArray.count ?? 0
+    return BluetoothService.shared.viewModel?.scannedDevicesArray.count ?? 0
   }
 
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.identifier, for: indexPath) as? CollectionViewCell else { return UICollectionViewCell() }
-    cell.deviceLabel.text = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].name
+    cell.deviceLabel.text = BluetoothService.shared.viewModel?.scannedDevicesArray[indexPath.row].name
     return cell
   }
 
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    guard let batteryLevel = bluetoothService.viewModel?.batteryLevel else { return }
+    guard let batteryLevel = BluetoothService.shared.viewModel?.batteryLevel else { return }
     //        bluetoothService.selectedDevice()
 
     let deviceDetailVC = DeviceDetailViewController()
     
-    deviceDetailVC.deviceHeaderName = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].name ?? ""
-    deviceDetailVC.deviceDetail = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].data ?? ""
-    deviceDetailVC.deviceRssiDetail = bluetoothService.viewModel?.scannedDevicesArray[indexPath.row].rssi ?? ""
+    deviceDetailVC.deviceHeaderName = BluetoothService.shared.viewModel?.scannedDevicesArray[indexPath.row].name ?? ""
+    deviceDetailVC.deviceDetail = BluetoothService.shared.viewModel?.scannedDevicesArray[indexPath.row].data ?? ""
+    deviceDetailVC.deviceRssiDetail = BluetoothService.shared.viewModel?.scannedDevicesArray[indexPath.row].rssi ?? ""
     deviceDetailVC.batteryInfo = String(describing: batteryLevel)
     print("3 didSelectItem", batteryLevel)
 
